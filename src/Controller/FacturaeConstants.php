@@ -12,7 +12,7 @@ abstract class FacturaeConstants {
   const USER_AGENT = "FacturaePHP/" . self::VERSION;
 
   const SCHEMA_3_2 = "3.2";
-  const SCHEMA_3_2_1 = "3.2.1";
+  const SCHEMA_1 = "1";
   const SCHEMA_3_2_2 = "3.2.2";
   const SIGN_POLICY_3_1 = array(
     "name" => "Política de Firma FacturaE v3.1",
@@ -94,7 +94,7 @@ abstract class FacturaeConstants {
   /* PROTECTED CONSTANTS */
   protected static $SCHEMA_NS = array(
     self::SCHEMA_3_2   => "http://www.facturae.es/Facturae/2009/v3.2/Facturae",
-    self::SCHEMA_3_2_1 => "http://www.facturae.es/Facturae/2014/v3.2.1/Facturae",
+    self::SCHEMA_1 => "http://www.dian.gov.co/contratos/facturaelectronica/v1",
     self::SCHEMA_3_2_2 => "http://www.facturae.gob.es/formato/Versiones/Facturaev3_2_2.xml"
   );
   protected static $DECIMALS = array(

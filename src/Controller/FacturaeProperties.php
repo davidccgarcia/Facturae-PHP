@@ -42,7 +42,7 @@ abstract class FacturaeProperties extends FacturaeConstants {
    * Constructor for the class
    * @param string $schemaVersion If omitted, latest version available
    */
-  public function __construct($schemaVersion=self::SCHEMA_3_2_1) {
+  public function __construct($schemaVersion=self::SCHEMA_1) {
     $this->setSchemaVersion($schemaVersion);
   }
 
