@@ -89,20 +89,78 @@ abstract class FacturaeExportable extends FacturaeSignable {
                 '</ext:ExtensionContent>' .
               '</ext:UBLExtension>' . 
               '<ext:UBLExtension>' .
-                '<ext:ExtensionContent>' .
-                '';
+                '<ext:ExtensionContent>';
     
     // Close invoice and document
-    $xml .= '</ext:UBLExtensions></ext:ExtensionContent></fe:Invoice>';
-    foreach ($this->extensions as $ext) $xml = $ext->__onBeforeSign($xml);
+    $xml .= '</ext:ExtensionContent></ext:UBLExtension></ext:UBLExtensions>';
 
     $xml = $this->injectSignature($xml);
-    // foreach ($this->extensions as $ext) $xml = $ext->__onAfterSign($xml);
-    foreach ($this->extensions as $ext) $xml = $ext->__onAfterSign($xml);
 
-    echo "<pre>"; print_r($this->header); echo "</pre>";
+    $xml .= '<cbc:UBLVersionID>UBL 2.0</cbc:UBLVersionID>' .
+            '<cbc:ProfileID>DIAN 1.0</cbc:ProfileID>' .
+            '<cbc:ID>PRUE980007161</cbc:ID>' .
+            '<cbc:UUID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Direccion de Impuestos y Aduanas Nacionales)">a3d6c86a71cbc066aaa19fd363c0fe4b5778d4a0</cbc:UUID>' . 
+            '<cbc:IssueDate>2016-07-12</cbc:IssueDate>' .
+            '<cbc:IssueTime>00:31:40</cbc:IssueTime>' .
+            '<cbc:InvoiceTypeCode listAgencyID="195" listAgencyName="CO, DIAN (Direccion de Impuestos y Aduanas Nacionales)" listSchemeURI="http://www.dian.gov.co/contratos/facturaelectronica/v1/InvoiceType">1</cbc:InvoiceTypeCode>' . 
+            '<cbc:Note>Set de pruebas</cbc:Note>' .
+            '<cbc:DocumentCurrencyCode>COP</cbc:DocumentCurrencyCode>' .
+            '<fe:AccountingSupplierParty>' .
+              '<cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>' .
+                '<fe:Party>' .
+                  '<cac:PartyIdentification>' .
+                    '<cbc:ID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Direccion de Impuestos y Aduanas Nacionales)" schemeID="31">900373115</cbc:ID>' .
+                  '</cac:PartyIdentification>' .
+                  '<cac:PartyName>' . 
+                    '<cbc:Name>PJ - 900373115 - Adquiriente FE</cbc:Name>' .
+                  '</cac:PartyName>' .
+                  '<fe:PhysicalLocation>' .
+                    '<fe:Address>' .
+                      '<cbc:Department>Distrito Capital</cbc:Department>' . 
+                      '<cbc:CitySubdivisionName>Centro</cbc:CitySubdivisionName>' .
+                      '<cbc:CityName>Bogotá</cbc:CityName>' . 
+                      '<cac:AddressLine>' . 
+                        '<cbc:Line>  carrera 8 Nº 6C - 78</cbc:Line>' . 
+                      '</cac:AddressLine>' .
+                      '<cac:Country>' .
+                        '<cbc:IdentificationCode>CO</cbc:IdentificationCode>' .
+                      '</cac:Country>' . 
+                    '</fe:Address>' .
+                  '</fe:PhysicalLocation>' . 
+                  '<fe:PartyTaxScheme>' .
+                    '<cbc:TaxLevelCode>0</cbc:TaxLevelCode>' .
+                    '<cac:TaxScheme/>' .
+                  '</fe:PartyTaxScheme>' . 
+                  '<fe:PartyLegalEntity>' .
+                    '<cbc:RegistrationName>PJ - 900373115</cbc:RegistrationName>' .
+                  '</fe:PartyLegalEntity>' . 
+                '</fe:Party>'.
+              '</fe:AccountingSupplierParty>' . 
+              '<fe:AccountingCustomerParty>' .
+                '<cbc:AdditionalAccountID>2</cbc:AdditionalAccountID>' . 
+                '<fe:Party>' . 
+                  '<cac:PartyIdentification>' .
+                    '<cbc:ID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Direccion de Impuestos y Aduanas Nacionales)" schemeID="22">11333000</cbc:ID>' .
+                  '</cac:PartyIdentification>' .
+                  '<fe:PhysicalLocation>' .
+                    '<fe:Address>' .
+                      '<cbc:Department>Valle del Cauca</cbc:Department>' .
+                      '<cbc:CitySubdivisionName>Centro</cbc:CitySubdivisionName>' .
+                      '<cbc:CityName>Toribio</cbc:CityName>' .
+                      '<cac:AddressLine>' .
+                          '<cbc:Line>  carrera 8 Nº 6C - 46</cbc:Line>' .
+                      '</cac:AddressLine>' .
+                      '<cac:Country>' .
+                        '<cbc:IdentificationCode>CO</cbc:IdentificationCode>' .
+                      '</cac:Country>' .
+                    '</fe:Address>' .
+                  '</fe:PhysicalLocation>' .
+                  '<fe:PartyTaxScheme>' .
+                    '<cbc:TaxLevelCode>0</cbc:TaxLevelCode>' .
+                    '<cac:TaxScheme/>' .
+                  '</fe:PartyTaxScheme>';
+
     echo htmlentities($xml); exit;
-
     // Add parties
     $xml .= '<Parties>' .
               '<SellerParty>' . $this->parties['seller']->getXML($this->version) . '</SellerParty>' .

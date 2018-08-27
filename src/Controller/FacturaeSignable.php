@@ -205,22 +205,22 @@ abstract class FacturaeSignable extends FacturaeUtils {
     $signatureResult = $tools->getSignature($signaturePayload, $this->privateKey);
 
     // Make signature
-    $sig = '<ds:Signature xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Id="Signature' . $this->signatureID . '">' . "\n" .
+    $sig = '<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="Signature' . $this->signatureID . '">' . "\n" .
              $sInfo . "\n" .
              '<ds:SignatureValue Id="SignatureValue' . $this->signatureValueID . '">' . "\n" .
                $signatureResult .
              '</ds:SignatureValue>' . "\n" .
              $kInfo . "\n" .
              '<ds:Object Id="Signature' . $this->signatureID . '-Object' . $this->signatureObjectID . '">' .
-               '<xades:QualifyingProperties Target="#Signature' . $this->signatureID . '">' .
+               '<xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#Signature' . $this->signatureID . '">' .
                  $prop .
                '</xades:QualifyingProperties>' .
              '</ds:Object>' .
            '</ds:Signature>';
 
     // Inject signature
-    $xml = str_replace('</fe:Invoice>', $sig . '</fe:Invoice>', $xml);
-
+    $xml = str_replace('</ext:ExtensionContent></ext:UBLExtension></ext:UBLExtensions>', $sig . '</ext:ExtensionContent></ext:UBLExtension></ext:UBLExtensions>', $xml);
+    
     // Inject timestamp
     if (!empty($this->timestampServer)) $xml = $this->injectTimestamp($xml);
 
