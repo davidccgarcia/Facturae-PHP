@@ -1,5 +1,7 @@
 <?php
 
+ini_set('display_errors', 1);
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use josemmo\Facturae\Facturae;
@@ -50,4 +52,4 @@ $fac->addItem("Lámpara de pie", 20.14, 3, Facturae::TAX_IVA, 21);
 $fac->sign(__DIR__ . '/../tests/persona_juridica_pruebas_vigente.p12', null, 'persona_juridica_pruebas');
 
 // ... y exportarlo a un archivo
-$fac->export(__DIR__ . "/../storage/salida.xsig");
+$fac->export(__DIR__ . "/../storage/salida.xml");
