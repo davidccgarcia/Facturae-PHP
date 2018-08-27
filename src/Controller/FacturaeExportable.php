@@ -40,33 +40,68 @@ abstract class FacturaeExportable extends FacturaeSignable {
   public function export($filePath=null) {
     $tools = new XmlTools();
 
-    // Prepare document
-    $xml = '<fe:Facturae xmlns:ds="http://www.w3.org/2000/09/xmldsig#" ' .
-           'xmlns:fe="' . self::$SCHEMA_NS[$this->version] . '">';
+    $xml = '<fe:Invoice xmlns:fe="'. self::$SCHEMA_NS[$this->version] .'" ' .
+            'xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" ' .
+            'xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" ' .
+            'xmlns:clm54217="urn:un:unece:uncefact:codelist:specification:54217:2001" ' .
+            'xmlns:clm66411="urn:un:unece:uncefact:codelist:specification:66411:2001" ' .
+            'xmlns:clmIANAMIMEMediaType="urn:un:unece:uncefact:codelist:specification:IANAMIMEMediaType:2003" ' .
+            'xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" ' .
+            'xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2" ' .
+            'xmlns:sts="http://www.dian.gov.co/contratos/facturaelectronica/v1/Structures" ' .
+            'xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2" ' .
+            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' .
+            'xsi:schemaLocation="http://www.dian.gov.co/contratos/facturaelectronica/v1 ../xsd/DIAN_UBL.xsd urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2 ../../ubl2/common/UnqualifiedDataTypeSchemaModule-2.0.xsd urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2 ../../ubl2/common/UBL-QualifiedDatatypes-2.0.xsd">';
+    
     $totals = $this->getTotals();
 
-    // Add header
-    $batchIdentifier = $this->parties['seller']->taxNumber .
-      $this->header['number'] . $this->header['serie'];
-    $xml .= '<FileHeader>' .
-              '<SchemaVersion>' . $this->version .'</SchemaVersion>' .
-              '<Modality>I</Modality>' .
-              '<InvoiceIssuerType>EM</InvoiceIssuerType>' .
-              '<Batch>' .
-                '<BatchIdentifier>' . $batchIdentifier . '</BatchIdentifier>' .
-                '<InvoicesCount>1</InvoicesCount>' .
-                '<TotalInvoicesAmount>' .
-                  '<TotalAmount>' . $this->pad($totals['invoiceAmount']) . '</TotalAmount>' .
-                '</TotalInvoicesAmount>' .
-                '<TotalOutstandingAmount>' .
-                  '<TotalAmount>' . $this->pad($totals['invoiceAmount']) . '</TotalAmount>' .
-                '</TotalOutstandingAmount>' .
-                '<TotalExecutableAmount>' .
-                  '<TotalAmount>' . $this->pad($totals['invoiceAmount']) . '</TotalAmount>' .
-                '</TotalExecutableAmount>' .
-                '<InvoiceCurrencyCode>' . $this->currency . '</InvoiceCurrencyCode>' .
-              '</Batch>' .
-            '</FileHeader>';
+    $xml .= '<ext:UBLExtensions>' .
+              '<ext:UBLExtension>' . 
+                '<ext:ExtensionContent>' . 
+                  '<sts:DianExtensions>' .
+                    '<sts:InvoiceControl>' .
+                      '<sts:InvoiceAuthorization>9000000141004745</sts:InvoiceAuthorization>' . 
+                      '<sts:AuthorizationPeriod>' .
+                        '<cbc:StartDate>2018-04-13</cbc:StartDate>' .
+                        '<cbc:EndDate>2028-04-13</cbc:EndDate>' .
+                      '</sts:AuthorizationPeriod>' .
+                      '<sts:AuthorizedInvoices>' .
+                        '<sts:Prefix>PRUE</sts:Prefix>' .
+                        '<sts:From>980000000</sts:From>' .
+                        '<sts:To>985000000</sts:To>' .
+                      '</sts:AuthorizedInvoices>' . 
+                    '</sts:InvoiceControl>' .
+                    '<sts:InvoiceSource>' . 
+                      '<cbc:IdentificationCode listAgencyID="6" listAgencyName="United Nations Economic Commission for Europe" listSchemeURI="urn:oasis:names:specification:ubl:codelist:gc:CountryIdentificationCode-2.0">CO</cbc:IdentificationCode>' .
+                    '</sts:InvoiceSource>' .
+                    '<sts:SoftwareProvider>' .
+                      '<sts:ProviderID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Direccion de Impuestos y Aduanas Nacionales)">' .
+                        '900373115' .
+                      '</sts:ProviderID>' .
+                      '<sts:SoftwareID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Direccion de Impuestos y Aduanas Nacionales)">' .
+                        '0d2e2883-eb8d-4237-87fe-28aeb71e961e' .
+                      '</sts:SoftwareID>' .
+                    '</sts:SoftwareProvider>' . 
+                    '<sts:SoftwareSecurityCode schemeAgencyID="195" schemeAgencyName="CO, DIAN (Direccion de Impuestos y Aduanas Nacionales)">' .
+                      'bdaa51c9953e08dcc8f398961f7cd0717cd5fbea356e937660aa1a8abbe31f4c9b4eb5cf8682eaca4c8523953253dcce' .
+                    '</sts:SoftwareSecurityCode>' .
+                  '</sts:DianExtensions>' .
+                '</ext:ExtensionContent>' .
+              '</ext:UBLExtension>' . 
+              '<ext:UBLExtension>' .
+                '<ext:ExtensionContent>' .
+                '';
+    
+    // Close invoice and document
+    $xml .= '</ext:UBLExtensions></ext:ExtensionContent></fe:Invoice>';
+    foreach ($this->extensions as $ext) $xml = $ext->__onBeforeSign($xml);
+
+    $xml = $this->injectSignature($xml);
+    // foreach ($this->extensions as $ext) $xml = $ext->__onAfterSign($xml);
+    foreach ($this->extensions as $ext) $xml = $ext->__onAfterSign($xml);
+
+    echo "<pre>"; print_r($this->header); echo "</pre>";
+    echo htmlentities($xml); exit;
 
     // Add parties
     $xml .= '<Parties>' .

@@ -219,7 +219,7 @@ abstract class FacturaeSignable extends FacturaeUtils {
            '</ds:Signature>';
 
     // Inject signature
-    $xml = str_replace('</fe:Facturae>', $sig . '</fe:Facturae>', $xml);
+    $xml = str_replace('</fe:Invoice>', $sig . '</fe:Invoice>', $xml);
 
     // Inject timestamp
     if (!empty($this->timestampServer)) $xml = $this->injectTimestamp($xml);
