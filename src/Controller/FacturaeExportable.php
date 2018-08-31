@@ -158,185 +158,62 @@ abstract class FacturaeExportable extends FacturaeSignable {
                   '<fe:PartyTaxScheme>' .
                     '<cbc:TaxLevelCode>0</cbc:TaxLevelCode>' .
                     '<cac:TaxScheme/>' .
-                  '</fe:PartyTaxScheme>';
-
-    echo htmlentities($xml); exit;
-    // Add parties
-    $xml .= '<Parties>' .
-              '<SellerParty>' . $this->parties['seller']->getXML($this->version) . '</SellerParty>' .
-              '<BuyerParty>' . $this->parties['buyer']->getXML($this->version) . '</BuyerParty>' .
-            '</Parties>';
-
-    // Add invoice data
-    $xml .= '<Invoices><Invoice>';
-    $xml .= '<InvoiceHeader>' .
-        '<InvoiceNumber>' . $this->header['number'] . '</InvoiceNumber>' .
-        '<InvoiceSeriesCode>' . $this->header['serie'] . '</InvoiceSeriesCode>' .
-        '<InvoiceDocumentType>FC</InvoiceDocumentType>' .
-        '<InvoiceClass>OO</InvoiceClass>' .
-      '</InvoiceHeader>';
-    $xml .= '<InvoiceIssueData>';
-    $xml .= '<IssueDate>' . date('Y-m-d', $this->header['issueDate']) . '</IssueDate>';
-    if (!is_null($this->header['startDate'])) {
-      $xml .= '<InvoicingPeriod>' .
-          '<StartDate>' . date('Y-m-d', $this->header['startDate']) . '</StartDate>' .
-          '<EndDate>' . date('Y-m-d', $this->header['endDate']) . '</EndDate>' .
-        '</InvoicingPeriod>';
-    }
-    $xml .= '<InvoiceCurrencyCode>' . $this->currency . '</InvoiceCurrencyCode>';
-    $xml .= '<TaxCurrencyCode>' . $this->currency . '</TaxCurrencyCode>';
-    $xml .= '<LanguageName>' . $this->language . '</LanguageName>';
-    $xml .= $this->addOptionalFields($this->header, [
-      "description" => "InvoiceDescription",
-      "receiverTransactionReference",
-      "fileReference",
-      "receiverContractReference"
-    ]);
-    $xml .= '</InvoiceIssueData>';
-
-    // Add invoice taxes
-    foreach (["taxesOutputs", "taxesWithheld"] as $taxesGroup) {
-      if (count($totals[$taxesGroup]) == 0) continue;
-      $xmlTag = ucfirst($taxesGroup); // Just capitalize variable name
-      $xml .= "<$xmlTag>";
-      foreach ($totals[$taxesGroup] as $type=>$taxRows) {
-        foreach ($taxRows as $rate=>$tax) {
-          $xml .= '<Tax>' .
-                    '<TaxTypeCode>' . $type . '</TaxTypeCode>' .
-                    '<TaxRate>' . $this->pad($rate) . '</TaxRate>' .
-                    '<TaxableBase>' .
-                      '<TotalAmount>' . $this->pad($tax['base']) . '</TotalAmount>' .
-                    '</TaxableBase>' .
-                    '<TaxAmount>' .
-                      '<TotalAmount>' . $this->pad($tax['amount']) . '</TotalAmount>' .
-                    '</TaxAmount>' .
-                  '</Tax>';
-        }
-      }
-      $xml .= "</$xmlTag>";
-    }
-
-    // Add invoice totals
-    $xml .= '<InvoiceTotals>' .
-              '<TotalGrossAmount>' . $this->pad($totals['grossAmount']) . '</TotalGrossAmount>' .
-              '<TotalGeneralDiscounts>0.00</TotalGeneralDiscounts>' .
-              '<TotalGeneralSurcharges>0.00</TotalGeneralSurcharges>' .
-              '<TotalGrossAmountBeforeTaxes>' . $this->pad($totals['grossAmountBeforeTaxes']) . '</TotalGrossAmountBeforeTaxes>' .
-              '<TotalTaxOutputs>' . $this->pad($totals['totalTaxesOutputs']) . '</TotalTaxOutputs>' .
-              '<TotalTaxesWithheld>' . $this->pad($totals['totalTaxesWithheld']) . '</TotalTaxesWithheld>' .
-              '<InvoiceTotal>' . $this->pad($totals['invoiceAmount']) . '</InvoiceTotal>' .
-              '<TotalOutstandingAmount>' . $this->pad($totals['invoiceAmount']) . '</TotalOutstandingAmount>' .
-              '<TotalExecutableAmount>' . $this->pad($totals['invoiceAmount']) . '</TotalExecutableAmount>' .
-            '</InvoiceTotals>';
-
-    // Add invoice items
-    $xml .= '<Items>';
-    foreach ($this->items as $itemObj) {
-      $item = $itemObj->getData();
-      $xml .= '<InvoiceLine>';
-
-      // Add optional fields
-      $xml .= $this->addOptionalFields($item, [
-        "issuerContractReference", "issuerContractDate",
-        "issuerTransactionReference", "issuerTransactionDate",
-        "receiverContractReference", "receiverContractDate",
-        "receiverTransactionReference", "receiverTransactionDate",
-        "fileReference", "fileDate", "sequenceNumber"
-      ]);
-
-      // Add required fields
-      $xml .= '<ItemDescription>' . $tools->escape($item['name']) . '</ItemDescription>' .
-        '<Quantity>' . $this->pad($item['quantity']) . '</Quantity>' .
-        '<UnitOfMeasure>' . $item['unitOfMeasure'] . '</UnitOfMeasure>' .
-        '<UnitPriceWithoutTax>' . $this->pad($item['unitPriceWithoutTax'], 'UnitPriceWithoutTax') . '</UnitPriceWithoutTax>' .
-        '<TotalCost>' . $this->pad($item['totalAmountWithoutTax'], 'TotalCost') . '</TotalCost>' .
-        '<GrossAmount>' . $this->pad($item['grossAmount'], 'GrossAmount') . '</GrossAmount>';
-
-      // Add item taxes
-      // NOTE: As you can see here, taxesWithheld is before taxesOutputs.
-      // This is intentional, as most official administrations would mark the
-      // invoice as invalid XML if the order is incorrect.
-      foreach (["taxesWithheld", "taxesOutputs"] as $taxesGroup) {
-        if (count($item[$taxesGroup]) == 0) continue;
-        $xmlTag = ucfirst($taxesGroup); // Just capitalize variable name
-        $xml .= "<$xmlTag>";
-        foreach ($item[$taxesGroup] as $type=>$tax) {
-          $xml .= '<Tax>' .
-                    '<TaxTypeCode>' . $type . '</TaxTypeCode>' .
-                    '<TaxRate>' . $this->pad($tax['rate']) . '</TaxRate>' .
-                    '<TaxableBase>' .
-                      '<TotalAmount>' . $this->pad($item['totalAmountWithoutTax']) . '</TotalAmount>' .
-                    '</TaxableBase>' .
-                    '<TaxAmount>' .
-                      '<TotalAmount>' . $this->pad($tax['amount']) . '</TotalAmount>' .
-                    '</TaxAmount>' .
-                  '</Tax>';
-        }
-        $xml .= "</$xmlTag>";
-      }
-
-      // Add more optional fields
-      $xml .= $this->addOptionalFields($item, [
-        "description" => "AdditionalLineItemInformation",
-        "articleCode"
-      ]);
-
-      // Close invoice line
-      $xml .= '</InvoiceLine>';
-    }
-    $xml .= '</Items>';
-
-    // Add payment details
-    if (!is_null($this->header['paymentMethod'])) {
-      $dueDate = is_null($this->header['dueDate']) ?
-        $this->header['issueDate'] :
-        $this->header['dueDate'];
-      $xml .= '<PaymentDetails>' .
-                '<Installment>' .
-                  '<InstallmentDueDate>' . date('Y-m-d', $dueDate) . '</InstallmentDueDate>' .
-                  '<InstallmentAmount>' . $this->pad($totals['invoiceAmount']) . '</InstallmentAmount>' .
-                  '<PaymentMeans>' . $this->header['paymentMethod'] . '</PaymentMeans>';
-      if ($this->header['paymentMethod'] == self::PAYMENT_TRANSFER) {
-        $xml .=   '<AccountToBeCredited>' .
-                    '<IBAN>' . $this->header['paymentIBAN'] . '</IBAN>' .
-                  '</AccountToBeCredited>';
-      }
-      $xml .=   '</Installment>' .
-              '</PaymentDetails>';
-    }
-
-    // Add legal literals
-    if (count($this->legalLiterals) > 0) {
-      $xml .= '<LegalLiterals>';
-      foreach ($this->legalLiterals as $reference) {
-        $xml .= '<LegalReference>' . $tools->escape($reference) . '</LegalReference>';
-      }
-      $xml .= '</LegalLiterals>';
-    }
-
-    // Add additional data
-    $extensionsXML = array();
-    foreach ($this->extensions as $ext) {
-      $extXML = $ext->__getAdditionalData();
-      if (!empty($extXML)) $extensionsXML[] = $extXML;
-    }
-    if (count($extensionsXML) > 0) {
-      $xml .= '<AdditionalData><Extensions>';
-      $xml .= implode("", $extensionsXML);
-      $xml .= '</Extensions></AdditionalData>';
-    }
-
-    // Close invoice and document
-    $xml .= '</Invoice></Invoices></fe:Facturae>';
-    foreach ($this->extensions as $ext) $xml = $ext->__onBeforeSign($xml);
-
-    // Add signature
-    $xml = $this->injectSignature($xml);
-    foreach ($this->extensions as $ext) $xml = $ext->__onAfterSign($xml);
+                  '</fe:PartyTaxScheme>' .
+                  '<fe:Person>' .
+                    '<cbc:FirstName>Primer-N</cbc:FirstName>' .
+                    '<cbc:FamilyName>Apellido-11333000</cbc:FamilyName>' .
+                    '<cbc:MiddleName>Segundo-N</cbc:MiddleName>' .
+                  '</fe:Person>' .
+                '</fe:Party>' . 
+              '</fe:AccountingCustomerParty>' .
+              '<fe:TaxTotal>' .
+                '<cbc:TaxAmount currencyID="COP">109625.61</cbc:TaxAmount>' .
+                '<cbc:TaxEvidenceIndicator>false</cbc:TaxEvidenceIndicator>' .
+                '<fe:TaxSubtotal>' .
+                  '<cbc:TaxableAmount currencyID="COP">1134840.69</cbc:TaxableAmount>' .
+                  '<cbc:TaxAmount currencyID="COP">109625.61</cbc:TaxAmount>' .
+                  '<cbc:Percent>9.66</cbc:Percent>' .
+                  '<cac:TaxCategory>' .
+                    '<cac:TaxScheme>' .
+                      '<cbc:ID>03</cbc:ID>' .
+                    '</cac:TaxScheme>' .
+                  '</cac:TaxCategory>' .
+                '</fe:TaxSubtotal>' .
+              '</fe:TaxTotal>' .
+              '<fe:TaxTotal>' .
+                '<cbc:TaxAmount currencyID="COP">46982.4</cbc:TaxAmount>' .
+                '<cbc:TaxEvidenceIndicator>false</cbc:TaxEvidenceIndicator>' .
+                '<fe:TaxSubtotal>' .
+                    '<cbc:TaxableAmount currencyID="COP">1134840.69</cbc:TaxableAmount>' .
+                    '<cbc:TaxAmount currencyID="COP">46982.4</cbc:TaxAmount>' .
+                    '<cbc:Percent>4.14</cbc:Percent>' .
+                    '<cac:TaxCategory>' .
+                      '<cac:TaxScheme>' .
+                        '<cbc:ID>02</cbc:ID>' .
+                      '</cac:TaxScheme>' .
+                    '</cac:TaxCategory>' .
+                '</fe:TaxSubtotal>' .
+              '</fe:TaxTotal>' .
+              '<fe:LegalMonetaryTotal>' .
+                '<cbc:LineExtensionAmount currencyID="COP">1134840.69</cbc:LineExtensionAmount>' .
+                '<cbc:TaxExclusiveAmount currencyID="COP">156608.01</cbc:TaxExclusiveAmount>' .
+                '<cbc:PayableAmount currencyID="COP">1291448.7</cbc:PayableAmount>' .
+              '</fe:LegalMonetaryTotal>' .
+              '<fe:InvoiceLine>' .
+                '<cbc:ID>1</cbc:ID>' .
+                '<cbc:InvoicedQuantity>765</cbc:InvoicedQuantity>' .
+                '<cbc:LineExtensionAmount currencyID="COP">1134840.697170767</cbc:LineExtensionAmount>' .
+                '<fe:Item>' .
+                  '<cbc:Description>Línea-1 PRUE980007161 f-s0001_900373115_0d2e2_R9000000500017960-PRUE-A_cufe</cbc:Description>' .
+                '</fe:Item>' .
+                '<fe:Price>' .
+                  '<cbc:PriceAmount currencyID="COP">1483.4518917264927</cbc:PriceAmount>' .
+                '</fe:Price>' .
+              '</fe:InvoiceLine>' .
+            '</fe:Invoice>';
 
     // Prepend content type
     $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . $xml;
-
     // Save document
     if (!is_null($filePath)) return file_put_contents($filePath, $xml);
     return $xml;
