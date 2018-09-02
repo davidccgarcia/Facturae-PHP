@@ -13,10 +13,18 @@ $fac = new Facturae();
 // Asignamos el número EMP2017120003 a la factura
 // Nótese que Facturae debe recibir el lote y el
 // número separados
-$fac->setNumber('EMP201712', '0003');
+$fac->setNumber('9000000104004370', '980000000');
 
 // Asignamos el 01/12/2017 como fecha de la factura
 $fac->setIssueDate('2017-12-01');
+
+// Asignamos fecha de inicio y fecha de fin para factura electrónica
+$fac->setBillingPeriod('2018-04-13', '2028-04-13')
+    ->setPrefix('PRUE')
+    ->setBillingRanges(980000000, 985000000)
+    ->setIdentificationCode('CO')
+    ->setSoftwareProvider(900242742, '6a7bc0fe-d361-4fee-92b0-cf41e099e454')
+    ->setSoftwareSecurityCode('sFABILU');
 
 // Incluimos los datos del vendedor
 $fac->setSeller(new FacturaeParty([

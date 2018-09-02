@@ -65,30 +65,32 @@ abstract class FacturaeExportable extends FacturaeSignable
                         '<ext:ExtensionContent>' .
                             '<sts:DianExtensions>' .
                                 '<sts:InvoiceControl>' .
-                                    '<sts:InvoiceAuthorization>9000000141004745</sts:InvoiceAuthorization>' .
+                                    '<sts:InvoiceAuthorization>' . $this->header['invoice_authorization'] . '</sts:InvoiceAuthorization>' .
                                     '<sts:AuthorizationPeriod>' .
-                                        '<cbc:StartDate>2018-04-13</cbc:StartDate>' .
-                                        '<cbc:EndDate>2028-04-13</cbc:EndDate>' .
+                                        '<cbc:StartDate>' . $this->header['start_date'] . '</cbc:StartDate>' .
+                                        '<cbc:EndDate>' . $this->header['end_date'] . '</cbc:EndDate>' .
                                     '</sts:AuthorizationPeriod>' .
                                     '<sts:AuthorizedInvoices>' .
-                                        '<sts:Prefix>PRUE</sts:Prefix>' .
-                                        '<sts:From>980000000</sts:From>' .
-                                        '<sts:To>985000000</sts:To>' .
+                                        '<sts:Prefix>' . $this->header['prefix'] . '</sts:Prefix>' .
+                                        '<sts:From>' . $this->header['from'] . '</sts:From>' .
+                                        '<sts:To>' . $this->header['to'] . '</sts:To>' .
                                     '</sts:AuthorizedInvoices>' .
                                 '</sts:InvoiceControl>' .
                                 '<sts:InvoiceSource>' .
-                                    '<cbc:IdentificationCode listAgencyID="6" listAgencyName="United Nations Economic Commission for Europe" listSchemeURI="urn:oasis:names:specification:ubl:codelist:gc:CountryIdentificationCode-2.0">CO</cbc:IdentificationCode>' .
+                                    '<cbc:IdentificationCode listAgencyID="6" listAgencyName="United Nations Economic Commission for Europe" listSchemeURI="urn:oasis:names:specification:ubl:codelist:gc:CountryIdentificationCode-2.0">' .
+                                        $this->header['identification_code'] .
+                                    '</cbc:IdentificationCode>' .
                                 '</sts:InvoiceSource>' .
                                 '<sts:SoftwareProvider>' .
                                     '<sts:ProviderID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Direccion de Impuestos y Aduanas Nacionales)">' .
-                                        '900373115' .
+                                        $this->header['provider_id'] .
                                     '</sts:ProviderID>' .
                                     '<sts:SoftwareID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Direccion de Impuestos y Aduanas Nacionales)">' .
-                                        '0d2e2883-eb8d-4237-87fe-28aeb71e961e' .
+                                        $this->header['software_id'] .
                                     '</sts:SoftwareID>' .
                                 '</sts:SoftwareProvider>' .
                                 '<sts:SoftwareSecurityCode schemeAgencyID="195" schemeAgencyName="CO, DIAN (Direccion de Impuestos y Aduanas Nacionales)">' .
-                                    'bdaa51c9953e08dcc8f398961f7cd0717cd5fbea356e937660aa1a8abbe31f4c9b4eb5cf8682eaca4c8523953253dcce' .
+                                    $this->header['software_security_code'] .
                                 '</sts:SoftwareSecurityCode>' .
                             '</sts:DianExtensions>' .
                         '</ext:ExtensionContent>' .
