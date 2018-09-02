@@ -13,22 +13,21 @@ use josemmo\Facturae\FacturaeItem;
 abstract class FacturaeProperties extends FacturaeConstants {
 
   /* ATTRIBUTES */
-  protected $currency = "EUR";
-  protected $language = "es";
+  protected $currency = 'COP';
+  protected $language = 'es';
   protected $version = null;
   protected $header = array(
-    "serie" => null,
-    "number" => null,
-    "issueDate" => null,
-    "dueDate" => null,
-    "startDate" => null,
-    "endDate" => null,
-    "paymentMethod" => null,
-    "paymentIBAN" => null,
-    "description" => null,
-    "receiverTransactionReference" => null,
-    "fileReference" => null,
-    "receiverContractReference" => null
+    'invoice_authorization' => null,
+    'start_date' => null,
+    'end_date' => null,
+    'prefix' => null, 
+    'number' => null, 
+    'from' => null, 
+    'to' => null, 
+    'identification_code' => null, 
+    'provider_id' => null, 
+    'software_id' => null, 
+    'software_security_code' => null
   );
   protected $parties = array(
     "seller" => null,
@@ -80,11 +79,11 @@ abstract class FacturaeProperties extends FacturaeConstants {
   /**
    * Set invoice number
    *
-   * @param string     $serie  Serie code of the invoice
+   * @param string     $serie  InvoiceAuthorization code of the invoice
    * @param int|string $number Invoice number in given serie
    */
-  public function setNumber($serie, $number) {
-    $this->header['serie'] = $serie;
+  public function setNumber($invoiceAuthorization, $number) {
+    $this->header['invoice_authorization'] = $invoiceAuthorization;
     $this->header['number'] = $number;
   }
 
@@ -116,12 +115,77 @@ abstract class FacturaeProperties extends FacturaeConstants {
    * @param int|string $date End date
    */
   public function setBillingPeriod($startDate=null, $endDate=null) {
-    if (is_string($startDate)) $startDate = strtotime($startDate);
-    if (is_string($endDate)) $endDate = strtotime($endDate);
-    $this->header['startDate'] = $startDate;
-    $this->header['endDate'] = $endDate;
+    $this->header['start_date'] = $startDate;
+    $this->header['end_date'] = $endDate;
+
+    return $this;
   }
 
+  /**
+   * Set prefix
+   *
+   * @param string $prefix The prefix of the invoice
+   */
+  public function setPrefix($prefix)
+  {
+    $this->header['prefix'] = $prefix;
+
+    return $this;
+  }
+
+
+  /**
+   * Set Billing ranges
+   *
+   * @param int|string $from range from
+   * @param int|string $to range to
+   */
+  public function setBillingRanges($from, $to)
+  {
+    $this->header['from'] = $from;
+    $this->header['to'] = $to;
+
+    return $this;
+  }
+
+  /**
+   * Set identification code 
+   *
+   * @param string $code country code
+   */
+  public function setIdentificationCode($code)
+  {
+    $this->header['identification_code'] = $code;
+
+    return $this;
+  }
+
+  /**
+   * Set software provider
+   *
+   * @param int    $providerID service provider
+   * @param string $softwareID software identifier
+   */
+  public function setSoftwareProvider($providerID, $softwareID)
+  {
+    $this->header['provider_id'] = $providerID;
+    $this->header['software_id'] = $softwareID;
+
+    return $this;
+  }
+
+  /**
+   * Set Software Security Code
+   *
+   * @param string $softwarePIN Software PIN
+   */
+  public function setSoftwareSecurityCode($softwarePIN)
+  {
+    $softwareSecurityCode = $this->header['software_id'] . $softwarePIN;
+    $this->header['software_security_code'] = hash('sha384', $softwareSecurityCode);
+
+    return $this;
+  }
 
   /**
    * Set dates
