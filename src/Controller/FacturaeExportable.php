@@ -153,82 +153,96 @@ abstract class FacturaeExportable extends FacturaeSignable
                         '</fe:PartyLegalEntity>' .
                     '</fe:Party>' .
                 '</fe:AccountingSupplierParty>';
-            
-            '<fe:AccountingCustomerParty>' .
-            '<cbc:AdditionalAccountID>2</cbc:AdditionalAccountID>' .
-            '<fe:Party>' .
-            '<cac:PartyIdentification>' .
-            '<cbc:ID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Direccion de Impuestos y Aduanas Nacionales)" schemeID="22">11333000</cbc:ID>' .
-            '</cac:PartyIdentification>' .
-            '<fe:PhysicalLocation>' .
-            '<fe:Address>' .
-            '<cbc:Department>Valle del Cauca</cbc:Department>' .
-            '<cbc:CitySubdivisionName>Centro</cbc:CitySubdivisionName>' .
-            '<cbc:CityName>Toribio</cbc:CityName>' .
-            '<cac:AddressLine>' .
-            '<cbc:Line>  carrera 8 Nº 6C - 46</cbc:Line>' .
-            '</cac:AddressLine>' .
-            '<cac:Country>' .
-            '<cbc:IdentificationCode>CO</cbc:IdentificationCode>' .
-            '</cac:Country>' .
-            '</fe:Address>' .
-            '</fe:PhysicalLocation>' .
-            '<fe:PartyTaxScheme>' .
-            '<cbc:TaxLevelCode>0</cbc:TaxLevelCode>' .
-            '<cac:TaxScheme/>' .
-            '</fe:PartyTaxScheme>' .
-            '<fe:Person>' .
-            '<cbc:FirstName>Primer-N</cbc:FirstName>' .
-            '<cbc:FamilyName>Apellido-11333000</cbc:FamilyName>' .
-            '<cbc:MiddleName>Segundo-N</cbc:MiddleName>' .
-            '</fe:Person>' .
-            '</fe:Party>' .
-            '</fe:AccountingCustomerParty>' .
-            '<fe:TaxTotal>' .
-            '<cbc:TaxAmount currencyID="COP">109625.61</cbc:TaxAmount>' .
-            '<cbc:TaxEvidenceIndicator>false</cbc:TaxEvidenceIndicator>' .
-            '<fe:TaxSubtotal>' .
-            '<cbc:TaxableAmount currencyID="COP">1134840.69</cbc:TaxableAmount>' .
-            '<cbc:TaxAmount currencyID="COP">109625.61</cbc:TaxAmount>' .
-            '<cbc:Percent>9.66</cbc:Percent>' .
-            '<cac:TaxCategory>' .
-            '<cac:TaxScheme>' .
-            '<cbc:ID>03</cbc:ID>' .
-            '</cac:TaxScheme>' .
-            '</cac:TaxCategory>' .
-            '</fe:TaxSubtotal>' .
-            '</fe:TaxTotal>' .
-            '<fe:TaxTotal>' .
-            '<cbc:TaxAmount currencyID="COP">46982.4</cbc:TaxAmount>' .
-            '<cbc:TaxEvidenceIndicator>false</cbc:TaxEvidenceIndicator>' .
-            '<fe:TaxSubtotal>' .
-            '<cbc:TaxableAmount currencyID="COP">1134840.69</cbc:TaxableAmount>' .
-            '<cbc:TaxAmount currencyID="COP">46982.4</cbc:TaxAmount>' .
-            '<cbc:Percent>4.14</cbc:Percent>' .
-            '<cac:TaxCategory>' .
-            '<cac:TaxScheme>' .
-            '<cbc:ID>02</cbc:ID>' .
-            '</cac:TaxScheme>' .
-            '</cac:TaxCategory>' .
-            '</fe:TaxSubtotal>' .
-            '</fe:TaxTotal>' .
-            '<fe:LegalMonetaryTotal>' .
-            '<cbc:LineExtensionAmount currencyID="COP">1134840.69</cbc:LineExtensionAmount>' .
-            '<cbc:TaxExclusiveAmount currencyID="COP">156608.01</cbc:TaxExclusiveAmount>' .
-            '<cbc:PayableAmount currencyID="COP">1291448.7</cbc:PayableAmount>' .
-            '</fe:LegalMonetaryTotal>' .
-            '<fe:InvoiceLine>' .
-            '<cbc:ID>1</cbc:ID>' .
-            '<cbc:InvoicedQuantity>765</cbc:InvoicedQuantity>' .
-            '<cbc:LineExtensionAmount currencyID="COP">1134840.697170767</cbc:LineExtensionAmount>' .
-            '<fe:Item>' .
-            '<cbc:Description>Línea-1 PRUE980007161 f-s0001_900373115_0d2e2_R9000000500017960-PRUE-A_cufe</cbc:Description>' .
-            '</fe:Item>' .
-            '<fe:Price>' .
-            '<cbc:PriceAmount currencyID="COP">1483.4518917264927</cbc:PriceAmount>' .
-            '</fe:Price>' .
-            '</fe:InvoiceLine>' .
-            '</fe:Invoice>';
+        
+        // 2.2 - Adquiriente:
+        $xml .= '<fe:AccountingCustomerParty>' .
+                    '<cbc:AdditionalAccountID>2</cbc:AdditionalAccountID>' .
+                    '<fe:Party>' .
+                        '<cac:PartyIdentification>' .
+                            '<cbc:ID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Direccion de Impuestos y Aduanas Nacionales)" schemeID="22">11333000</cbc:ID>' .
+                        '</cac:PartyIdentification>' .
+                        '<fe:PhysicalLocation>' .
+                            '<fe:Address>' .
+                                '<cbc:Department>Valle del Cauca</cbc:Department>' .
+                                '<cbc:CitySubdivisionName>Centro</cbc:CitySubdivisionName>' .
+                                '<cbc:CityName>Toribio</cbc:CityName>' .
+                                '<cac:AddressLine>' .
+                                    '<cbc:Line>  carrera 8 Nº 6C - 46</cbc:Line>' .
+                                '</cac:AddressLine>' .
+                                '<cac:Country>' .
+                                    '<cbc:IdentificationCode>CO</cbc:IdentificationCode>' .
+                                '</cac:Country>' .
+                            '</fe:Address>' .
+                        '</fe:PhysicalLocation>' .
+                        '<fe:PartyTaxScheme>' .
+                            '<cbc:TaxLevelCode>0</cbc:TaxLevelCode>' .
+                            '<cac:TaxScheme/>' .
+                        '</fe:PartyTaxScheme>' .
+                        '<fe:Person>' .
+                            '<cbc:FirstName>Primer-N</cbc:FirstName>' .
+                            '<cbc:FamilyName>Apellido-11333000</cbc:FamilyName>' .
+                            '<cbc:MiddleName>Segundo-N</cbc:MiddleName>' .
+                        '</fe:Person>' .
+                    '</fe:Party>' .
+                '</fe:AccountingCustomerParty>';
+
+        // 7.1.1 - Impuesto Retenido: Elemento raíz compuesto utilizado para informar de un
+        // impuesto retenido. / 8.1.1 - Impuesto: elemento raíz compuesto utilizado para 
+        // informar de un impuesto.
+        $xml .= '<fe:TaxTotal>' .
+                    '<cbc:TaxAmount currencyID="COP">109625.61</cbc:TaxAmount>' .
+                    '<cbc:TaxEvidenceIndicator>false</cbc:TaxEvidenceIndicator>' .
+                    '<fe:TaxSubtotal>' .
+                        '<cbc:TaxableAmount currencyID="COP">1134840.69</cbc:TaxableAmount>' .
+                        '<cbc:TaxAmount currencyID="COP">109625.61</cbc:TaxAmount>' .
+                        '<cbc:Percent>9.66</cbc:Percent>' .
+                        '<cac:TaxCategory>' .
+                            '<cac:TaxScheme>' .
+                                '<cbc:ID>03</cbc:ID>' .
+                            '</cac:TaxScheme>' .
+                        '</cac:TaxCategory>' .
+                    '</fe:TaxSubtotal>' .
+                '</fe:TaxTotal>';
+
+        $xml .= '<fe:TaxTotal>' .
+                    '<cbc:TaxAmount currencyID="COP">46982.4</cbc:TaxAmount>' .
+                    '<cbc:TaxEvidenceIndicator>false</cbc:TaxEvidenceIndicator>' .
+                    '<fe:TaxSubtotal>' .
+                        '<cbc:TaxableAmount currencyID="COP">1134840.69</cbc:TaxableAmount>' .
+                        '<cbc:TaxAmount currencyID="COP">46982.4</cbc:TaxAmount>' .
+                        '<cbc:Percent>4.14</cbc:Percent>' .
+                        '<cac:TaxCategory>' .
+                            '<cac:TaxScheme>' .
+                                '<cbc:ID>02</cbc:ID>' .
+                            '</cac:TaxScheme>' .
+                        '</cac:TaxCategory>' .
+                    '</fe:TaxSubtotal>' .
+                '</fe:TaxTotal>';
+
+        // 9 - Datos Importes Totales: Agrupación de campos relativos a los importes totales 
+        // aplicables a la factura. Estos importes son calculador teniendo en cuenta las líneas
+        // de factura y elementos a nivel de factura, como descuentos, cargos, impuestos, etc.
+        $xml .= '<fe:LegalMonetaryTotal>' .
+                    '<cbc:LineExtensionAmount currencyID="COP">1134840.69</cbc:LineExtensionAmount>' .
+                    '<cbc:TaxExclusiveAmount currencyID="COP">156608.01</cbc:TaxExclusiveAmount>' .
+                    '<cbc:PayableAmount currencyID="COP">1291448.7</cbc:PayableAmount>' .
+                '</fe:LegalMonetaryTotal>';
+
+        // 13.1.1 - Línea de Factura: Elemento que agrupa todos los campos de una línea de factura
+        $xml .= '<fe:InvoiceLine>' .
+                    '<cbc:ID>1</cbc:ID>' .
+                    '<cbc:InvoicedQuantity>765</cbc:InvoicedQuantity>' .
+                    '<cbc:LineExtensionAmount currencyID="COP">1134840.697170767</cbc:LineExtensionAmount>' .
+                    '<fe:Item>' .
+                        '<cbc:Description>Línea-1 PRUE980007161 f-s0001_900373115_0d2e2_R9000000500017960-PRUE-A_cufe</cbc:Description>' .
+                    '</fe:Item>' .
+                    '<fe:Price>' .
+                        '<cbc:PriceAmount currencyID="COP">1483.4518917264927</cbc:PriceAmount>' .
+                    '</fe:Price>' .
+                '</fe:InvoiceLine>';
+
+        // Close document
+        $xml .= '</fe:Invoice>';
 
         // Prepend content type
         $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . $xml;
